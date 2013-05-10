@@ -65,9 +65,4 @@ class Vatsim {
 	private function _filterByAtc($data) {
 		return $data['clienttype'] == 'ATC';
 	}
-
 }
-
-$obj = new Vatsim;
-$pilots = $obj->showType('ATC');
-FB::log($pilots);

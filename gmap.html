@@ -3,13 +3,12 @@
 <head>
 	<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
 	<style type="text/css">
-	html { height: 100% }
-	body { height: 100%; margin: 0; padding: 0 }
-	#map-canvas { height: 100% }
+		html { height: 100% }
+		body { height: 100%; margin: 0; padding: 0 }
+		#map-canvas { height: 100% }
 	</style>
-	<script type="text/javascript"
-	src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAEHQbCSMxhU3UJbFnsCOUxOqwTffy0gQs&sensor=false&libraries=weather">
-	</script>
+	<script	src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAEHQbCSMxhU3UJbFnsCOUxOqwTffy0gQs&sensor=false&libraries=weather"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 	<script type="text/javascript">
 	function initialize() {
 		var mapOptions = {
@@ -29,39 +28,36 @@
 		var cloudLayer = new google.maps.weather.CloudLayer();
 		cloudLayer.setMap(map);
 
+		var json = (function () {
+			var json = null;
+			$.ajax({
+				'async': false,
+				'global': false,
+				'url': 'json.php',
+				'dataType': "json",
+				'success': function (data) {
+					json = data;
+				}
+			});
+			return json;
+		})(); 
 
-		var image = 'red_dot.png';
-		var myLatLng = new google.maps.LatLng(7.4673, -67.0235);
-		var beachMarker = new google.maps.Marker({
-			position: myLatLng,
-			map: map,
-			icon: image
-		});
-
-
-
-		// Define the list of markers.
-		// This could be generated server-side with a script creating the array.
-		var markers = [
-		{ lat: -33.85, lng: 151.05, name: "marker 1" },
-		{ lat: -33.90, lng: 151.10, name: "marker 2" },
-		{ lat: -33.95, lng: 151.15, name: "marker 3" },
-		{ lat: -33.85, lng: 151.15, name: "marker 4" }
-		];
+		console.log(json);
 
 		// Create the markers ad infowindows.
-		for (index in markers) addMarker(markers[index]);
+		for (index in json) addMarker(json[index]);
 			function addMarker(data) {
 			// Create the marker
 			var marker = new google.maps.Marker({
-				position: new google.maps.LatLng(data.lat, data.lng),
+				position: new google.maps.LatLng(data.latitude, data.longitude),
 				map: map,
-				title: data.name
+				title: data.callsign,
+				icon: 'red_dot.png'
 			});
 
-		}
-		
+		}		
 	}
+
 	google.maps.event.addDomListener(window, 'load', initialize);
 	</script>
 </head>

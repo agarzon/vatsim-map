@@ -20,26 +20,26 @@ class Vatsim {
 		foreach ($file as $ifile) {
 			if (substr($ifile, 0, 1) != ";") {
 				$ifile = utf8_decode(rtrim($ifile));
-				if ($allowed == true && substr($ifile, 0, 1) != "!") {
-					$data[] = explode(":", $ifile);
+				if ($allowed == true && substr($ifile, 0, 1) != "!") {					
+					$data[] = self::_parseAssociative(explode(":", $ifile));
 				} else {
 					$allowed = false;
 					if ($ifile == "!CLIENTS:") {
 						$allowed = true;
-					}					
+					}
 				}
 			}
 		}
 
-		FB::log(count($data));
+		FB::log($data);
 		return $data;
 	}
 
-	public function showAtc() {
+	public static function showAtc() {
 		return array_filter($this->data, array($this, '_filterByAtc'));
 	}
 
-	private function _parseAssociative($data) {
+	private static function _parseAssociative($array) {
 		$keys = array(
 			'callsign', 'cid', 'realname', 'clienttype', 'frequency', 'latitude', 'longitude', 
 			'altitude', 'groundspeed', 'planned_aircraft', 'planned_tascruise', 'planned_depairport', 
@@ -49,17 +49,17 @@ class Vatsim {
 			'planned_minfuel', 'planned_altairport', 'planned_remarks', 'planned_route', 
 			'planned_depairport_lat', 'planned_depairport_lon', 'planned_destairport_lat', 
 			'planned_destairport_lon', 'atis_message', 'time_last_atis_received', 'time_logon', 
-			'heading', 'QNH_iHg', 'QNH_Mb',
+			'heading', 'QNH_iHg', 'QNH_Mb', 'wtf'
 		);
 
-		return array_combine($keys, $data);
+		return array_combine($keys, $array);
 	}
 
-	private function _filterByPilot() {
+	private static function _filterByPilot() {
 		return (is_array($data) && $data[3] == 'PILOT');
 	}
 
-	private function _filterByAtc($data) {
+	private static function _filterByAtc($data) {
 		return (is_array($data) && $data[3] == 'ATC');
 	}
 

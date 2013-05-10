@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+	<style type="text/css">
+	html { height: 100% }
+	body { height: 100%; margin: 0; padding: 0 }
+	#map-canvas { height: 100% }
+	</style>
+	<script type="text/javascript"
+	src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAEHQbCSMxhU3UJbFnsCOUxOqwTffy0gQs&sensor=false&libraries=weather">
+	</script>
+	<script type="text/javascript">
+	function initialize() {
+		var mapOptions = {
+			center: new google.maps.LatLng(7.4673, -67.0235),
+			zoom: 5,
+			mapTypeId: google.maps.MapTypeId.ROADMAP,
+			disableDefaultUI: true,
+		};
+		var map = new google.maps.Map(document.getElementById("map-canvas"),
+			mapOptions);
+
+		var weatherLayer = new google.maps.weather.WeatherLayer({
+			temperatureUnits: google.maps.weather.TemperatureUnit.CELSIUS
+		});
+		weatherLayer.setMap(map);
+
+		var cloudLayer = new google.maps.weather.CloudLayer();
+		cloudLayer.setMap(map);
+
+
+		var image = 'red_dot.png';
+		var myLatLng = new google.maps.LatLng(7.4673, -67.0235);
+		var beachMarker = new google.maps.Marker({
+			position: myLatLng,
+			map: map,
+			icon: image
+		});
+
+
+
+		// Define the list of markers.
+		// This could be generated server-side with a script creating the array.
+		var markers = [
+		{ lat: -33.85, lng: 151.05, name: "marker 1" },
+		{ lat: -33.90, lng: 151.10, name: "marker 2" },
+		{ lat: -33.95, lng: 151.15, name: "marker 3" },
+		{ lat: -33.85, lng: 151.15, name: "marker 4" }
+		];
+
+		// Create the markers ad infowindows.
+		for (index in markers) addMarker(markers[index]);
+			function addMarker(data) {
+			// Create the marker
+			var marker = new google.maps.Marker({
+				position: new google.maps.LatLng(data.lat, data.lng),
+				map: map,
+				title: data.name
+			});
+
+		}
+		
+	}
+	google.maps.event.addDomListener(window, 'load', initialize);
+	</script>
+</head>
+<body>
+	<div id="map-canvas" style="width: 650px; height: 450px"></div>
+</body>
+</html>

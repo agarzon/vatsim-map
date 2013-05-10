@@ -9,11 +9,21 @@ class Vatsim {
 	}
 
 	/**
-	 * Parse vatsim data
+	 * Parse vatsim data taked from http://status.vatsim.net/status.txt servers
 	 * @return array $data clients connected
 	 */
-	public static function getClients() {
-		$file    = file("vatsim-data.txt");//http://status.vatsim.net/status.txt
+	public static function getClients() {		
+		$servers = array(
+			'http://www.pcflyer.net/DataFeed/vatsim-data.txt',
+			'http://www.klain.net/sidata/vatsim-data.txt',
+			'http://fsproshop.com/servinfo/vatsim-data.txt',
+			'http://info.vroute.net/vatsim-data.txt',
+			'http://data.vattastic.com/vatsim-data.txt',
+			);
+
+		uksort($servers, function() { return rand() > rand(); });
+
+		$file    = file($servers[0]);
 		$allowed = false;
 		$data    = array();
 
@@ -45,7 +55,7 @@ class Vatsim {
 			'planned_depairport_lat', 'planned_depairport_lon', 'planned_destairport_lat', 
 			'planned_destairport_lon', 'atis_message', 'time_last_atis_received', 'time_logon', 
 			'heading', 'QNH_iHg', 'QNH_Mb', 'wtf'
-		);
+			);
 
 		return array_combine($keys, $array);
 	}

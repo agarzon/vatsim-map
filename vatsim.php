@@ -50,7 +50,11 @@ class Vatsim {
 		return array_combine($keys, $array);
 	}
 
-	public function showAtc() {
+	public function showType($type = 'PILOT') {
+		if ($type === 'PILOT') {
+			return array_filter($this->data, array($this, '_filterByPilot'));
+		}
+
 		return array_filter($this->data, array($this, '_filterByAtc'));
 	}
 
@@ -65,4 +69,5 @@ class Vatsim {
 }
 
 $obj = new Vatsim;
-FB::log($obj->showAtc());
+$pilots = $obj->showType('ATC');
+FB::log($pilots);

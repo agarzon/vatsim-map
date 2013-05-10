@@ -10,7 +10,7 @@ class Vatsim {
 
 	/**
 	 * Parse vatsim data
-	 * @return array $data connected clients
+	 * @return array $data clients connected
 	 */
 	public static function getClients() {
 		$file    = file("vatsim-data.txt");//http://status.vatsim.net/status.txt
@@ -31,12 +31,7 @@ class Vatsim {
 			}
 		}
 
-		FB::log($data);
 		return $data;
-	}
-
-	public static function showAtc() {
-		return array_filter($this->data, array($this, '_filterByAtc'));
 	}
 
 	private static function _parseAssociative($array) {
@@ -55,14 +50,19 @@ class Vatsim {
 		return array_combine($keys, $array);
 	}
 
-	private static function _filterByPilot() {
-		return (is_array($data) && $data[3] == 'PILOT');
+	public function showAtc() {
+		return array_filter($this->data, array($this, '_filterByAtc'));
 	}
 
-	private static function _filterByAtc($data) {
-		return (is_array($data) && $data[3] == 'ATC');
+	private function _filterByPilot($data) {
+		return $data['clienttype'] == 'PILOT';
+	}
+
+	private function _filterByAtc($data) {
+		return $data['clienttype'] == 'ATC';
 	}
 
 }
 
 $obj = new Vatsim;
+FB::log($obj->showAtc());

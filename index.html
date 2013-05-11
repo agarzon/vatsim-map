@@ -1,12 +1,17 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-	<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<style type="text/css">
-		html { height: 100% }
-		body { height: 100%; margin: 0; padding: 0 }
-		#map-canvas { height: 100% }
+	body {
+		font-family: 'Ubuntu', sans-serif;
+	}
+	.gbox {
+		font-size: 8pt;
+	}
 	</style>
+	<link href='http://fonts.googleapis.com/css?family=Ubuntu' rel='stylesheet' type='text/css'>
 	<script	src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAEHQbCSMxhU3UJbFnsCOUxOqwTffy0gQs&sensor=false&libraries=weather"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 	<script type="text/javascript">
@@ -15,7 +20,7 @@
 			center: new google.maps.LatLng(7.4673, -67.0235),
 			zoom: 5,
 			mapTypeId: google.maps.MapTypeId.ROADMAP,
-			disableDefaultUI: true,
+			disableDefaultUI: false,
 		};
 		var map = new google.maps.Map(document.getElementById("map-canvas"),
 			mapOptions);
@@ -28,24 +33,24 @@
 		var cloudLayer = new google.maps.weather.CloudLayer();
 		cloudLayer.setMap(map);
 
-		var json = (function () {
-			var json = null;
+		var jsonMarkers = (function () {
+			var jsonMarkers = null;
 			$.ajax({
 				'async': false,
 				'global': false,
 				'url': 'json.php',
 				'dataType': "json",
 				'success': function (data) {
-					json = data;
+					jsonMarkers = data;
 				}
 			});
-			return json;
+			return jsonMarkers;
 		})(); 
 
-		console.log(json);
+		console.log(jsonMarkers);
 
-		// Create the markers ad infowindows.
-		for (index in json) addMarker(json[index]);
+		for (index in jsonMarkers) addMarker(jsonMarkers[index]);
+
 			function addMarker(data) {
 			// Create the marker
 			var marker = new google.maps.Marker({
@@ -55,7 +60,24 @@
 				icon: 'red_dot.png'
 			});
 
-		}		
+			var contentString = '<div class="gbox">'+
+				'<h3>'+ data.callsign +'</h3>'+
+				'<b>Capit&#225;n: </b>' + data.realname + '<br>' +
+				'<b>Equipo: </b>' + data.planned_aircraft + '<br>' +
+				'<b>Salida: </b>' + data.planned_depairport + '<br>' +
+				'<b>Salida: </b>' + data.planned_destairport + '<br>' +
+				'</div>';
+
+			var infowindow = new google.maps.InfoWindow({
+				content: contentString,
+				maxWidth: 350
+			});
+
+			google.maps.event.addListener(marker, 'click', function() {
+				infowindow.open(map,marker);
+			});
+		}
+
 	}
 
 	google.maps.event.addDomListener(window, 'load', initialize);

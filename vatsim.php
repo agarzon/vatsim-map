@@ -3,16 +3,17 @@ require_once('FirePHPCore/fb.php');
 class Vatsim {
 
 	public $data = array();
+	public $icao = '';
 
 	public function __construct() {
-		$this->data = $this->getClients();		
+		$this->data = $this->getClients();
 	}
 
 	/**
 	 * Parse vatsim data taked from http://status.vatsim.net/status.txt servers
 	 * @return array $data clients connected
 	 */
-	public static function getClients() {		
+	public function getClients() {
 		$servers = array(
 			'http://www.pcflyer.net/DataFeed/vatsim-data.txt',
 			'http://www.klain.net/sidata/vatsim-data.txt',
@@ -30,7 +31,7 @@ class Vatsim {
 		foreach ($file as $ifile) {
 			if (substr($ifile, 0, 1) != ";") {
 				$ifile = utf8_decode(rtrim($ifile));
-				if ($allowed == true && substr($ifile, 0, 1) != "!") {					
+				if ($allowed == true && substr($ifile, 0, 1) != "!") {
 					$data[] = self::_parseAssociative(explode(":", $ifile));
 				} else {
 					$allowed = false;
@@ -68,11 +69,20 @@ class Vatsim {
 		return array_filter($this->data, array($this, '_filterByAtc'));
 	}
 
+	public function showByAirline($icao = 'TCA') {
+		$this->icao = $icao;
+		return array_filter($this->data, array($this, '_filterByAirline'));
+	}
+
 	private function _filterByPilot($data) {
 		return $data['clienttype'] == 'PILOT';
 	}
 
 	private function _filterByAtc($data) {
 		return $data['clienttype'] == 'ATC';
+	}
+
+	private function _filterByAirline($data) {
+		return (!preg_match("/^$this->icao/", $data['callsign']) === false);
 	}
 }

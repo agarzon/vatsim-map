@@ -10,7 +10,8 @@ class Vatsim {
 	}
 
 	/**
-	 * Parse vatsim data taked from http://status.vatsim.net/status.txt servers
+	 * Parse vatsim data taked from vatsim-data servers
+	 * 
 	 * @return array $data clients connected
 	 */
 	public function getClients() {
@@ -45,6 +46,12 @@ class Vatsim {
 		return $data;
 	}
 
+	/**
+	 * Create an array using a propoer keys names
+	 * 
+	 * @param  array $array loaded from vatsim-data.txt
+	 * @return array parsed as associative.
+	 */
 	private static function _parseAssociative($array) {
 		$keys = array(
 			'callsign', 'cid', 'realname', 'clienttype', 'frequency', 'latitude', 'longitude', 
@@ -55,12 +62,18 @@ class Vatsim {
 			'planned_minfuel', 'planned_altairport', 'planned_remarks', 'planned_route', 
 			'planned_depairport_lat', 'planned_depairport_lon', 'planned_destairport_lat', 
 			'planned_destairport_lon', 'atis_message', 'time_last_atis_received', 'time_logon', 
-			'heading', 'QNH_iHg', 'QNH_Mb', 'wtf'
+			'heading', 'QNH_iHg', 'QNH_Mb', 'NO_USED'
 			);
 
 		return array_combine($keys, $array);
 	}
 
+	/**
+	 * Filter array to show only PILOTS or ATC
+	 * 
+	 * @param  string $type PILOT or ATC
+	 * @return array
+	 */
 	public function showType($type = 'PILOT') {
 		if ($type === 'PILOT') {
 			return array_filter($this->data, array($this, '_filterByPilot'));
@@ -69,19 +82,43 @@ class Vatsim {
 		return array_filter($this->data, array($this, '_filterByAtc'));
 	}
 
+	/**
+	 * Filter array by callsign
+	 * 
+	 * @param  string $icao Airline ICAO
+	 * @return array
+	 */
 	public function showByAirline($icao = 'TCA') {
 		$this->icao = $icao;
 		return array_filter($this->data, array($this, '_filterByAirline'));
 	}
 
+	/**
+	 * Internal filter by PILOT
+	 * 
+	 * @param  array $data
+	 * @return array
+	 */
 	private function _filterByPilot($data) {
 		return $data['clienttype'] == 'PILOT';
 	}
 
+	/**
+	 * Internal filter by ATC
+	 * 
+	 * @param  array $data
+	 * @return array
+	 */
 	private function _filterByAtc($data) {
 		return $data['clienttype'] == 'ATC';
 	}
 
+	/**
+	 * Internal filter by callsign
+	 * 
+	 * @param  array $data
+	 * @return array
+	 */
 	private function _filterByAirline($data) {
 		return (!preg_match("/^$this->icao/", $data['callsign']) === false);
 	}

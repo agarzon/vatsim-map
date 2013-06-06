@@ -1,11 +1,12 @@
 <?php
 header('Content-Type: application/json');
-require_once('vatsim.php');
-$obj = new Vatsim;
+require_once 'Classes.php';
+$obj = new Classes\Vatsim;
 
 /* Here you can choose what you want to show */
+
 //$airlinePilots = $obj->showByAirline('TCA');
-$allPilots = $obj->showType('PILOT');
 //$allATC = $obj->showType('ATC');
+$allPilots = $obj->showType('PILOT');
 
 echo json_encode($allPilots);

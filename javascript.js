@@ -1,47 +1,32 @@
-function initialize() {
-	var mapOptions = {
-		center: new google.maps.LatLng(7.4673, -67.0235),
-		zoom: 5,
-		mapTypeId: google.maps.MapTypeId.ROADMAP,
-		disableDefaultUI: false,
-	};
-	var map = new google.maps.Map(document.getElementById("map-canvas"),
-		mapOptions);
-
-	var weatherLayer = new google.maps.weather.WeatherLayer({
-		temperatureUnits: google.maps.weather.TemperatureUnit.CELSIUS
+$(document).ready(function(){
+	var map = new GMaps({
+		div: '#map',
+		lat: 7.4673,
+		lng: -67.0235,
+		zoom: 5
 	});
-	weatherLayer.setMap(map);
 
-	var cloudLayer = new google.maps.weather.CloudLayer();
-	cloudLayer.setMap(map);
+	// Add Layers
+	map.addLayer("weather");
+	map.addLayer("clouds");
 
-	var jsonMarkers = (function () {
-		var jsonMarkers = null;
-		$.ajax({
-			'async': false,
-			'global': false,
-			'url': 'json.php',
-			'dataType': "json",
-			'success': function (data) {
-				jsonMarkers = data;
-			}
-		});
-		return jsonMarkers;
-	})(); 
+	// Get JSON data
+	var markers = null;
+	$.ajax({
+		'async': false,
+		'global': false,
+		'url': 'json.php',
+		'dataType': "json",
+		'success': function (data) {
+			markers = data;
+		}
+	});
+	console.log(markers);
 
-	console.log(jsonMarkers);
+	for (index in markers) addMarker(markers[index]);
 
-	for (index in jsonMarkers) addMarker(jsonMarkers[index]);
-
-		function addMarker(data) {
-		// Create the marker
-		var marker = new google.maps.Marker({
-			position: new google.maps.LatLng(data.latitude, data.longitude),
-			map: map,
-			title: data.callsign,
-			icon: 'red_dot.png'
-		});
+	// Custom function to add markers
+	function addMarker(data) {
 
 		var contentString = '<div style="font-size: 8pt;">'+
 		'<h3>'+ data.callsign +'</h3>' +
@@ -52,16 +37,16 @@ function initialize() {
 		'<b>Altitud: </b>' + data.altitude + 'ft.' + '<br>' +
 		'</div>';
 
-		var infowindow = new google.maps.InfoWindow({
-			content: contentString,
-			maxWidth: 350
-		});
-
-		google.maps.event.addListener(marker, 'click', function() {
-			infowindow.open(map,marker);
+		map.addMarker({
+			lat: data.latitude,
+			lng: data.longitude,
+			title: data.callsign,
+			icon: "red_dot.png",
+			infoWindow: {
+				content: contentString,
+				maxWidth: 350
+			}
 		});
 	}
 
-}
-
-google.maps.event.addDomListener(window, 'load', initialize);
+});

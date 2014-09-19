@@ -1,4 +1,4 @@
 vatsim-map
 ==========
 
-Vatsim pilots and google map
+Vatsim online flights with google map

@@ -5,8 +5,8 @@ $obj = new Classes\Vatsim;
 
 /* Here you can choose what you want to show */
 
-//$airlinePilots = $obj->showByAirline('TCA');
+$airlinePilots = $obj->showByAirline('TCA');
 //$allATC = $obj->showType('ATC');
-$allPilots = $obj->showType('PILOT');
+//$allPilots = $obj->showType('PILOT');
 
-echo json_encode($allPilots);
+echo json_encode($airlinePilots);

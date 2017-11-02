@@ -44,7 +44,7 @@ class Vatsim
 
         foreach ($file as $ifile) {
             if (substr($ifile, 0, 1) != ";") {
-                $ifile = utf8_decode(rtrim($ifile));
+                $ifile = iconv("ISO-8859-1", "UTF-8", rtrim($ifile));
                 if ($allowed == true && substr($ifile, 0, 1) != "!") {
                     $data[] = self::parseAssociative(explode(":", $ifile));
                 } else {
